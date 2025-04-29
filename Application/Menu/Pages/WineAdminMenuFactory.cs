@@ -1,5 +1,5 @@
 ﻿using Fiap.Agnello.CLI.Application.Menu.Core;
-using Fiap.Agnello.CLI.Application.Menu.Services;
+using Fiap.Agnello.CLI.Application.Services;
 
 namespace Fiap.Agnello.CLI.Application.Menu.Pages
 {

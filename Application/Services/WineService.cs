@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
-using Fiap.Agnello.CLI.Application.Menu.Domain;
-using Fiap.Agnello.CLI.Application.Menu.Repository;
+using Fiap.Agnello.CLI.Application.Domain;
+using Fiap.Agnello.CLI.Application.Repository;
 using Fiap.Agnello.CLI.Util;
 
-namespace Fiap.Agnello.CLI.Application.Menu.Services
+namespace Fiap.Agnello.CLI.Application.Services
 {
     internal class WineService
     {

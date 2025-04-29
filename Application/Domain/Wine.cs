@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Text.Json.Nodes;
-using Fiap.Agnello.CLI.Application.Menu.Adapters;
+using Fiap.Agnello.CLI.db.Adapters;
 
-namespace Fiap.Agnello.CLI.Application.Menu.Domain
+namespace Fiap.Agnello.CLI.Application.Domain
 {
     internal class Wine(string maker, string name, string country, string grape, float price, int year) : IJsonSerializable
     {

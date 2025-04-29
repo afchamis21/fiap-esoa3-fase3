@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
-using Fiap.Agnello.CLI.Application.Menu.Adapters;
-using Fiap.Agnello.CLI.Application.Menu.Domain;
+using Fiap.Agnello.CLI.Application.Domain;
+using Fiap.Agnello.CLI.db.Adapters;
 
-namespace Fiap.Agnello.CLI.Application.Menu.Repository
+namespace Fiap.Agnello.CLI.Application.Repository
 {
     internal class WineRepository : ICrudRepository<Wine, int>
     {

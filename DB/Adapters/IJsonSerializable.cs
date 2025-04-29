@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json.Nodes;
 
-namespace Fiap.Agnello.CLI.Application.Menu.Adapters
+namespace Fiap.Agnello.CLI.db.Adapters
 {
     internal abstract class IJsonSerializable
     {
