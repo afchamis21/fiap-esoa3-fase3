@@ -61,21 +61,9 @@ namespace Fiap.Agnello.CLI.Application.Menu.Core
             while (true)
             {
                 Console.WriteLine();
-                string? input = ConsoleUtil.Prompt("Escolha uma opção: ");
+                int input = ConsoleUtil.PromptInt("Escolha uma opção: ");
 
-                if (input == null)
-                {
-                    ConsoleUtil.SystemMessage("Escolha uma opção!");
-                    continue;
-                }
-
-                if (!int.TryParse(input, out int key))
-                {
-                    ConsoleUtil.SystemMessage("Opção inválida! Digite o número correspondente a uma das opções!");
-                    continue;
-                }
-
-                if (!options.TryGetValue(key, out MenuOption? option))
+                if (!options.TryGetValue(input, out MenuOption? option))
                 {
                     ConsoleUtil.SystemMessage("Opção inválida! Escolha uma das opções apresentadas");
                     continue;

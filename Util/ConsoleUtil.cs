@@ -12,10 +12,60 @@ namespace Fiap.Agnello.CLI.Util
         /// </summary>
         /// <param name="prompt">Texto a ser exibido para o usuário.</param>
         /// <returns>A entrada do usuário como string. Pode ser nula se o usuário pressionar Enter sem digitar nada.</returns>
-        public static string? Prompt(string prompt)
+        public static string Prompt(string prompt)
         {
-            Console.Write(prompt);
-            return Console.ReadLine();
+            while (true)
+            {
+                Console.Write(prompt);
+                string? result = Console.ReadLine();
+                if (result != null)
+                {
+                    return result;
+                }
+
+                Console.WriteLine("Digite um valor!");
+            }
+        }
+
+        /// <summary>
+        /// Solicita um número inteiro ao usuário via console até que uma entrada válida seja fornecida.
+        /// </summary>
+        /// <param name="prompt">Texto a ser exibido para o usuário.</param>
+        /// <returns>Um número inteiro inserido pelo usuário.</returns>
+        public static int PromptInt(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string? value = Console.ReadLine();
+                if (int.TryParse(value, out int result))
+                {
+                    return result;
+                }
+
+                Console.WriteLine("Digite um número inteiro válido!");
+            }
+        }
+
+
+        /// <summary>
+        /// Solicita um número decimal (float) ao usuário via console até que uma entrada válida seja fornecida.
+        /// </summary>
+        /// <param name="prompt">Texto a ser exibido para o usuário.</param>
+        /// <returns>Um número decimal inserido pelo usuário.</returns>
+        public static float PromptFloat(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string? value = Console.ReadLine();
+                if (float.TryParse(value?.Replace(".", ","), out float result))
+                {
+                    return result;
+                }
+
+                Console.WriteLine("Digite um número decimal válido!");
+            }
         }
 
         /// <summary>
