@@ -7,10 +7,10 @@ using Fiap.Agnello.CLI.Application.Menu.Core;
 
 namespace Fiap.Agnello.CLI.Application.Menu.Pages
 {
-    internal class HomeMenu : IMenuPage
+    internal class HomeMenuFactory : IMenuFactory
     {
         public MenuLevel Build() => new ("Home", [
-                new MenuOption("Ir para Vinhos", MenuNavigator.Navigate<WineMenu>)
+                new MenuOption("Ir para Vinhos", MenuNavigator.Navigate<WineMenuFactory>)
         ]);
     }
 }

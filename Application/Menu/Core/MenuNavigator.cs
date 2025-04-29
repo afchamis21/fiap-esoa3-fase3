@@ -12,14 +12,14 @@ namespace Fiap.Agnello.CLI.Application.Menu.Core
         /// Propriedade que armazena o menu atual da aplicação.
         /// Inicializa com o menu inicial da aplicação (HomeMenu).
         /// </summary>
-        public static MenuLevel Current { get; private set; } = new HomeMenu().Build();
+        public static MenuLevel Current { get; private set; } = new HomeMenuFactory().Build();
 
         /// <summary>
         /// Navega para o menu de tipo específico, criando uma nova instância da página de menu correspondente.
         /// O tipo da página de menu é determinado pelo parâmetro genérico <typeparamref name="T"/>.
         /// </summary>
-        /// <typeparam name="T">Tipo da página de menu que implementa <see cref="IMenuPage"/>.</typeparam>
-        public static void Navigate<T>() where T : IMenuPage, new()
+        /// <typeparam name="T">Tipo da página de menu que implementa <see cref="IMenuFactory"/>.</typeparam>
+        public static void Navigate<T>() where T : IMenuFactory, new()
         {
             Current = new T().Build();
         }
