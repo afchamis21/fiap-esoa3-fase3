@@ -3,12 +3,12 @@ using Fiap.Agnello.CLI.Application.Menu.Services;
 
 namespace Fiap.Agnello.CLI.Application.Menu.Pages
 {
-    internal class WineMenuFactory : IMenuFactory
+    internal class WineAdminMenuFactory  : IMenuFactory
     {
         public MenuLevel Build()
         {
             WineService service = new();
-            return new("Vinhos", [
+            return new("Vinhos (ADMIN)", [
                 new MenuOption("Voltar para Home", MenuNavigator.Navigate<HomeMenuFactory>),
                 new MenuOption("Cadastrar vinho", service.Create),
                 new MenuOption("Editar vinho", service.Update),

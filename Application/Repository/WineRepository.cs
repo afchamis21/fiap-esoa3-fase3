@@ -1,11 +1,32 @@
-﻿using Fiap.Agnello.CLI.Application.Menu.Domain;
+﻿using System.Text.Json;
+using Fiap.Agnello.CLI.Application.Menu.Adapters;
+using Fiap.Agnello.CLI.Application.Menu.Domain;
 
 namespace Fiap.Agnello.CLI.Application.Menu.Repository
 {
-    internal class WineInMemmoryRepository : ICrudRepository<Wine, int>
+    internal class WineRepository : ICrudRepository<Wine, int>
     {
+        private static readonly string DB_FILE_NAME = "db.json";
+        private static WineRepository? instance;
+        private readonly FileDbAdapter<Wine, int> fileDbAdapter = new(DB_FILE_NAME);
         private readonly Dictionary<int, Wine> _items = [];
-        private int _count = 0;
+        private int _count = 1;
+        
+        private WineRepository()
+        {
+            var savedItems = fileDbAdapter.LoadFromFile();
+            if (savedItems != null)
+            {
+                _items = savedItems;
+                _count = savedItems.Count + 1;
+            }
+        }
+
+        public static WineRepository GetInstance()
+        {
+            instance ??= new WineRepository();
+            return instance;
+        }
 
         private Wine Create(Wine entity)
         {
@@ -35,7 +56,10 @@ namespace Fiap.Agnello.CLI.Application.Menu.Repository
 
         public bool Delete(int id)
         {
-            return _items.Remove(id);
+            bool res = _items.Remove(id);
+            Persist();
+            return res;
+
         }
 
         public List<Wine> GetAll()
@@ -53,12 +77,23 @@ namespace Fiap.Agnello.CLI.Application.Menu.Repository
         public Wine Save(Wine entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
+
+            Wine wine;
             if (entity.Id == null)
             {
-                return Create(entity);
+                wine = Create(entity);
+            } else
+            {
+                wine = Update(entity);
             }
 
-            return Update(entity);
+            Persist();
+            return wine;
+        }
+
+        private void Persist()
+        {
+            fileDbAdapter.SaveToFile(_items);
         }
     }
 }

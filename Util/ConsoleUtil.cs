@@ -1,4 +1,6 @@
 ﻿
+using System.Globalization;
+
 namespace Fiap.Agnello.CLI.Util
 {
     /// <summary>
@@ -59,7 +61,7 @@ namespace Fiap.Agnello.CLI.Util
             {
                 Console.Write(prompt);
                 string? value = Console.ReadLine();
-                if (float.TryParse(value?.Replace(".", ","), out float result))
+                if (float.TryParse(value?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out float result))
                 {
                     return result;
                 }

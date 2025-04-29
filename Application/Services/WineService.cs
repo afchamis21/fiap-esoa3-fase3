@@ -1,4 +1,5 @@
-﻿using Fiap.Agnello.CLI.Application.Menu.Domain;
+﻿using System.Globalization;
+using Fiap.Agnello.CLI.Application.Menu.Domain;
 using Fiap.Agnello.CLI.Application.Menu.Repository;
 using Fiap.Agnello.CLI.Util;
 
@@ -6,7 +7,7 @@ namespace Fiap.Agnello.CLI.Application.Menu.Services
 {
     internal class WineService
     {
-        private readonly WineInMemmoryRepository repo = new();
+        private readonly WineRepository _repo = WineRepository.GetInstance();
         public void Create()
         {
             ConsoleUtil.SystemMessage("Digite os parametros solicitados");
@@ -20,17 +21,26 @@ namespace Fiap.Agnello.CLI.Application.Menu.Services
             Wine wine = new(maker, name, country, grape, price, year);
 
             ConsoleUtil.SystemMessage("Salvando dados...");
-            wine = repo.Save(wine);
+            wine = _repo.Save(wine);
             ConsoleUtil.SystemMessage($"Vinho salvo. ID [{wine.Id}]");
+        }
+
+        public Wine? FindById()
+        {
+            int id = ConsoleUtil.PromptInt("Qual o ID do vinho a editar? ");
+            Wine? wine = _repo.GetById(id);
+            if (wine == null)
+            {
+                ConsoleUtil.SystemMessage($"Nenhum vinho encontrado para o id [{id}]");
+            }
+            return wine;
         }
 
         public void Update()
         {
-            int id = ConsoleUtil.PromptInt("Qual o ID do vinho a editar? ");
-            Wine? wine = repo.GetById(id);
+            Wine? wine = FindById();
             if (wine == null)
             {
-                ConsoleUtil.SystemMessage($"Nenhum vinho encontrado para o id [{id}]");
                 return;
             }
 
@@ -46,9 +56,9 @@ namespace Fiap.Agnello.CLI.Application.Menu.Services
             if (!string.IsNullOrWhiteSpace(name))
                 wine.Name = name;
 
-            if (float.TryParse(priceInput, out float price))
+            if (float.TryParse(priceInput?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out float price))
                 wine.Price = price;
-
+            
             if (!string.IsNullOrWhiteSpace(maker))
                 wine.Maker = maker;
 
@@ -61,20 +71,20 @@ namespace Fiap.Agnello.CLI.Application.Menu.Services
             if (!string.IsNullOrWhiteSpace(country))
                 wine.Country = country;
 
-            repo.Save(wine);
+            _repo.Save(wine);
             ConsoleUtil.SystemMessage($"Vinho salvo. ID [{wine.Id}]");
         }
 
         public void Delete()
         {
             int id = ConsoleUtil.PromptInt("Qual o ID do vinho a deletar? ");
-            repo.Delete(id);
+            _repo.Delete(id);
             ConsoleUtil.SystemMessage("Vinho deletado com sucesso!");
         }
 
         public void PrintAll()
         {
-            List<Wine> wines = repo.GetAll();
+            List<Wine> wines = _repo.GetAll();
             if (wines.Count == 0)
             {
                 ConsoleUtil.SystemMessage("Nenhum vinho para exibir");
@@ -90,11 +100,9 @@ namespace Fiap.Agnello.CLI.Application.Menu.Services
 
         public void PrintById()
         {
-            int id = ConsoleUtil.PromptInt("Qual o ID do vinho? ");
-            Wine? wine = repo.GetById(id);
+            Wine? wine = FindById();
             if (wine == null)
             {
-                ConsoleUtil.SystemMessage("Vinho não encontrado!");
                 return;
             }
 
