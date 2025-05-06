@@ -1,20 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
-using System.Threading.Tasks;
-using Fiap.Agnello.CLI.Application.Menu.Domain;
 
 namespace Fiap.Agnello.CLI.db.Adapters
 {
+    /// <summary>
+    /// Adaptador de banco de dados baseado em arquivos JSON.
+    /// Permite salvar e carregar dados serializados a partir de um arquivo específico.
+    /// </summary>
+    /// <typeparam name="T">O tipo dos objetos a serem armazenados. Deve herdar de <see cref="IJsonSerializable"/>.</typeparam>
+    /// <typeparam name="ID">O tipo da chave identificadora usada no dicionário. Deve ser não-nula.</typeparam>
+
     internal class FileDbAdapter<T, ID> where ID : notnull where T : IJsonSerializable
     {
         private readonly string _path;
 
-        public FileDbAdapter(string path)
+        /// <summary>
+        /// Inicializa um novo adaptador de banco de dados de arquivos.
+        /// Cria o diretório base se ele não existir.
+        /// </summary>
+        /// <param name="fileName">Nome do arquivo (sem caminho completo).</param>
+
+        public FileDbAdapter(string fileName)
         {
             string dir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "DB");
 
@@ -23,9 +30,13 @@ namespace Fiap.Agnello.CLI.db.Adapters
                 Directory.CreateDirectory(dir);
             }
 
-            _path = Path.Combine(dir, path);
+            _path = Path.Combine(dir, fileName);
         }
 
+        /// <summary>
+        /// Carrega os dados do arquivo JSON como um dicionário de objetos.
+        /// </summary>
+        /// <returns>Dicionário de objetos desserializados ou null em caso de erro ou arquivo vazio.</returns>
         public Dictionary<ID, T>? LoadFromFile()
         {
             try
@@ -50,6 +61,11 @@ namespace Fiap.Agnello.CLI.db.Adapters
             return null;
         }
 
+        /// <summary>
+        /// Salva o dicionário de objetos no arquivo JSON especificado.
+        /// </summary>
+        /// <param name="dict">Dicionário a ser salvo.</param>
+        /// <returns>True se a operação for bem-sucedida; caso contrário, false.</returns>
         public bool SaveToFile(Dictionary<ID, T> dict)
         {
             try

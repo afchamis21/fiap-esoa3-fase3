@@ -1,33 +1,34 @@
 ﻿using System.Globalization;
 using Fiap.Agnello.CLI.Application.Domain;
+using Fiap.Agnello.CLI.Application.Domain.DTO;
 using Fiap.Agnello.CLI.Application.Repository;
 using Fiap.Agnello.CLI.Util;
 
 namespace Fiap.Agnello.CLI.Application.Services
 {
-    internal class WineService
+    /// <summary>
+    /// Serviço responsável por interagir com o repositório de vinhos e lidar com a lógica de entrada do usuário.
+    /// </summary>
+    internal class WineService(IWineRepository wineRepository)
     {
-        private readonly WineRepository _repo = WineRepository.GetInstance();
-        public void Create()
+        private readonly IWineRepository _repo = wineRepository;
+
+        /// <summary>
+        /// Cria um novo vinho a partir dos dados fornecidos pelo usuário via terminal.
+        /// </summary>
+        public void Create(WineDTO wineDTO)
         {
-            ConsoleUtil.SystemMessage("Digite os parametros solicitados");
-
-            string name = ConsoleUtil.Prompt("Nome: ");
-            float price = ConsoleUtil.PromptFloat("Preço: ");
-            string maker = ConsoleUtil.Prompt("Fabricante: ");
-            string grape = ConsoleUtil.Prompt("Uva: ");
-            int year = ConsoleUtil.PromptInt("Ano: ");
-            string country = ConsoleUtil.Prompt("País: ");
-            Wine wine = new(maker, name, country, grape, price, year);
-
             ConsoleUtil.SystemMessage("Salvando dados...");
-            wine = _repo.Save(wine);
+            Wine wine = _repo.Save(Wine.FromDTO(wineDTO));
             ConsoleUtil.SystemMessage($"Vinho salvo. ID [{wine.Id}]");
         }
 
-        public Wine? FindById()
+        /// <summary>
+        /// Solicita um ID ao usuário e busca o vinho correspondente.
+        /// </summary>
+        /// <returns>O vinho encontrado ou null se não existir.</returns>
+        public Wine? FindById(int id)
         {
-            int id = ConsoleUtil.PromptInt("Qual o ID do vinho a editar? ");
             Wine? wine = _repo.GetById(id);
             if (wine == null)
             {
@@ -36,78 +37,60 @@ namespace Fiap.Agnello.CLI.Application.Services
             return wine;
         }
 
-        public void Update()
+        public void Update(int id, UpdateWineDTO wineDTO)
         {
-            Wine? wine = FindById();
+            Wine? wine = FindById(id);
             if (wine == null)
             {
                 return;
             }
 
-            ConsoleUtil.SystemMessage("Digite os parametros solicitados (deixe em branco para não editar)");
+            Update(wine, wineDTO);
+        }
 
-            string name = ConsoleUtil.Prompt("Nome: ");
-            string priceInput = ConsoleUtil.Prompt("Preço: ");
-            string maker = ConsoleUtil.Prompt("Fabricante: ");
-            string grape = ConsoleUtil.Prompt("Uva: ");
-            string yearInput = ConsoleUtil.Prompt("Ano: ");
-            string country = ConsoleUtil.Prompt("País: ");
+        /// <summary>
+        /// Atualiza os dados de um vinho existente com base em inputs do usuário.
+        /// </summary>
+        public void Update(Wine wine, UpdateWineDTO wineDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(wineDTO.name))
+                wine.Name = wineDTO.name;
 
-            if (!string.IsNullOrWhiteSpace(name))
-                wine.Name = name;
-
-            if (float.TryParse(priceInput?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out float price))
+            if (float.TryParse(wineDTO.price?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out float price))
                 wine.Price = price;
             
-            if (!string.IsNullOrWhiteSpace(maker))
-                wine.Maker = maker;
+            if (!string.IsNullOrWhiteSpace(wineDTO.maker))
+                wine.Maker = wineDTO.maker;
 
-            if (!string.IsNullOrWhiteSpace(grape))
-                wine.Grape = grape;
+            if (!string.IsNullOrWhiteSpace(wineDTO.grape))
+                wine.Grape = wineDTO.grape;
 
-            if (int.TryParse(yearInput, out int year))
+            if (int.TryParse(wineDTO.year, out int year))
                 wine.Year = year;
 
-            if (!string.IsNullOrWhiteSpace(country))
-                wine.Country = country;
+            if (!string.IsNullOrWhiteSpace(wineDTO.country))
+                wine.Country = wineDTO.country;
 
             _repo.Save(wine);
             ConsoleUtil.SystemMessage($"Vinho salvo. ID [{wine.Id}]");
         }
 
-        public void Delete()
+        /// <summary>
+        /// Deleta um vinho a partir do ID fornecido pelo usuário.
+        /// </summary>
+        public void Delete(int id)
         {
-            int id = ConsoleUtil.PromptInt("Qual o ID do vinho a deletar? ");
             _repo.Delete(id);
             ConsoleUtil.SystemMessage("Vinho deletado com sucesso!");
         }
 
-        public void PrintAll()
+        /// <summary>
+        /// Exibe todos os vinhos armazenados no repositório.
+        /// </summary>
+        public List<Wine> GetAll()
         {
             List<Wine> wines = _repo.GetAll();
-            if (wines.Count == 0)
-            {
-                ConsoleUtil.SystemMessage("Nenhum vinho para exibir");
-                return;
-            }
-
-            ConsoleUtil.SystemMessage("Vinhos: ");
-            foreach (var wine in wines)
-            {
-                Console.WriteLine("".PadLeft(4, ' ') + wine);
-            }
-        }
-
-        public void PrintById()
-        {
-            Wine? wine = FindById();
-            if (wine == null)
-            {
-                return;
-            }
-
-            ConsoleUtil.SystemMessage("Vinho encontrado!");
-            Console.WriteLine("".PadLeft(4, ' ') + wine);
+            return wines;
         }
     }
 }

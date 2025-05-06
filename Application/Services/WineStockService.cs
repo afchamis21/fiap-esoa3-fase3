@@ -4,16 +4,28 @@ using Fiap.Agnello.CLI.Util;
 
 namespace Fiap.Agnello.CLI.Application.Services
 {
-    internal class WineStockService
+    /// <summary>
+    /// Serviço responsável por gerenciar o estoque de vinhos.
+    /// Permite registrar entradas, saídas e visualizar os estoques atuais.
+    /// </summary>
+    internal class WineStockService(IWineRepository wineRepository)
     {
-        private readonly WineService _wineService = new();
-        private readonly WineRepository _repo = WineRepository.GetInstance();
-        public void RegisterStockIn()
+        private readonly WineService _wineService = new(wineRepository);
+        private readonly IWineRepository _repo = wineRepository;
+
+        /// <summary>
+        /// Registra a entrada de estoque (adiciona unidades a um vinho).
+        /// </summary>
+        public void RegisterStockIn(int id, int add)
         {
-            Wine? wine = _wineService.FindById();
+            Wine? wine = _wineService.FindById(id);
             if (wine == null) return;
 
-            int add = ConsoleUtil.PromptInt("Informe a quantidade a adicionar: ");
+            RegisterStockIn(wine, add);
+        }
+
+        public void RegisterStockIn(Wine wine, int add)
+        {
             if (add <= 0)
             {
                 ConsoleUtil.SystemMessage("A quantidade deve ser maior que 0!");
@@ -24,12 +36,19 @@ namespace Fiap.Agnello.CLI.Application.Services
             _repo.Save(wine);
         }
 
-        public void RegisterStockOut()
+        /// <summary>
+        /// Registra a saída de estoque (remove unidades de um vinho).
+        /// </summary>
+        public void RegisterStockOut(int id, int minus)
         {
-            Wine? wine = _wineService.FindById();
+            Wine? wine = _wineService.FindById(id);
             if (wine == null) return;
 
-            int minus = ConsoleUtil.PromptInt("Informe a quantidade a retirar: ");
+            RegisterStockOut(wine, minus);
+        }
+
+        public void RegisterStockOut(Wine wine, int minus)
+        {
             if (minus <= 0)
             {
                 ConsoleUtil.SystemMessage("A quantidade deve ser maior que 0!");
@@ -44,22 +63,6 @@ namespace Fiap.Agnello.CLI.Application.Services
 
             wine.Stock -= minus;
             _repo.Save(wine);
-        }
-
-        public void PrintStocks()
-        {
-            List<Wine> wines = _repo.GetAll();
-            if (wines.Count == 0)
-            {
-                ConsoleUtil.SystemMessage("Nenhum vinho para exibir");
-                return;
-            }
-
-            ConsoleUtil.SystemMessage("Estoque: ");
-            foreach (var wine in wines)
-            {
-                Console.WriteLine($"{wine.Id?.ToString().PadRight(5)} | {wine.Name,-20} | {wine.Stock}");
-            }
         }
     }
 }

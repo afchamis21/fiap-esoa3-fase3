@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json.Nodes;
+using Fiap.Agnello.CLI.Application.Domain.DTO;
 using Fiap.Agnello.CLI.db.Adapters;
 
 namespace Fiap.Agnello.CLI.Application.Domain
@@ -20,6 +21,11 @@ namespace Fiap.Agnello.CLI.Application.Domain
             var brCulture = new CultureInfo("pt-BR");
 
             return $"ID: {Id,-5} | Nome: {Name,-15} | Fabricante: {Maker,-10} | País: {Country,-10} | Uva: {Grape,-15} | Preço: {Price.ToString("C", brCulture),-15} | Ano: {Year}";
+        }
+
+        public static Wine FromDTO(WineDTO dto)
+        {
+            return new(dto.maker, dto.name, dto.country, dto.grape, dto.price, dto.year);
         }
     }
 }

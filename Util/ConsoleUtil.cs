@@ -18,7 +18,7 @@ namespace Fiap.Agnello.CLI.Util
         {
             while (true)
             {
-                Console.Write(prompt);
+                Console.Write(prompt.Trim() + " ");
                 string? result = Console.ReadLine();
                 if (result != null)
                 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fiap.Agnello.CLI.Application.Repository
+namespace Fiap.Agnello.CLI.Application.Repository.Contracts
 {
     internal interface ICrudRepository<T, ID>
     {
