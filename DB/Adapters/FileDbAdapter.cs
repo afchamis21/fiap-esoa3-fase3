@@ -92,8 +92,6 @@ namespace Fiap.Agnello.CLI.db.Adapters
                     TypeInfoResolver = new DefaultJsonTypeInfoResolver()
                 };
 
-                Console.WriteLine($"Saving to: {Path.GetFullPath(_path)}");
-
                 File.WriteAllText(_path, root.ToJsonString(options));
                 return true;
             }
