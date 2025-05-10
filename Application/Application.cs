@@ -32,7 +32,7 @@ namespace Fiap.Agnello.CLI.Application
         /// Inicia a execução da aplicação CLI.
         /// Exibe o menu inicial, processa as interações do usuário e navega pelas opções do menu.
         /// </summary>
-        public void Execute()
+        public static void Execute()
         {
             Welcome();
             while (true)
@@ -42,8 +42,15 @@ namespace Fiap.Agnello.CLI.Application
                 ConsoleUtil.WriteTitle(level.Name);
                 level.ShowOptions();
                 MenuOption option = level.ChooseOption();
-                option.Action();
-                Console.WriteLine();
+                MenuStatus status = option.Action();
+
+                if (MenuStatus.WAIT.Equals(status))
+                {
+                    Console.WriteLine();
+                    ConsoleUtil.Prompt("Pressione ENTER para continuar...");
+                }
+
+                Console.Clear();
             }
         }
     }

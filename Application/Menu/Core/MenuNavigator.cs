@@ -19,9 +19,10 @@ namespace Fiap.Agnello.CLI.Application.Menu.Core
         /// O tipo da página de menu é determinado pelo parâmetro genérico <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">Tipo da página de menu que implementa <see cref="IMenuFactory"/>.</typeparam>
-        public static void Navigate<T>() where T : IMenuFactory, new()
+        public static MenuStatus Navigate<T>() where T : IMenuFactory, new()
         {
             Current = new T().Build();
+            return MenuStatus.PROCEED;
         }
     }
 }

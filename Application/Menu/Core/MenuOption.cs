@@ -11,7 +11,7 @@ namespace Fiap.Agnello.CLI.Application.Menu.Core
     /// </remarks>
     /// <param name="name">Nome da opção de menu.</param>
     /// <param name="action">Ação que será executada quando a opção for selecionada.</param>
-    internal class MenuOption(string name, Action action)
+    internal class MenuOption(string name, Func<MenuStatus> action)
     {
         /// <summary>
         /// Obtém o nome da opção de menu.
@@ -21,7 +21,7 @@ namespace Fiap.Agnello.CLI.Application.Menu.Core
         /// <summary>
         /// Obtém a ação associada a esta opção de menu.
         /// </summary>
-        public Action Action { get; } = action;
+        public Func<MenuStatus> Action { get; } = action;
 
         /// <summary>
         /// Representa a opção de saída (QUIT) do menu. Ao ser selecionada, o programa será encerrado.
@@ -30,6 +30,7 @@ namespace Fiap.Agnello.CLI.Application.Menu.Core
         {
             ConsoleUtil.SystemMessage("Saindo...");
             Environment.Exit(0);
+            return MenuStatus.PROCEED;
         });
     };
 }

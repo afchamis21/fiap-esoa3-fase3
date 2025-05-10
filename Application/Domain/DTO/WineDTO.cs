@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Fiap.Agnello.CLI.Application.Domain.DTO
+﻿namespace Fiap.Agnello.CLI.Application.Domain.DTO
 {
-    internal record WineDTO(string maker, string name, string country, string grape, float price, int year)
+    internal record WineDTO(string Maker, string Name, string Country, string Grape, float Price, int Year)
     {
     }
 }

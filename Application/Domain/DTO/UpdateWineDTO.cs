@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Fiap.Agnello.CLI.Application.Domain.DTO
+﻿namespace Fiap.Agnello.CLI.Application.Domain.DTO
 {
-    internal record UpdateWineDTO(string? maker, string? name, string? country, string? grape, string? price, string? year)
+    /// <summary>
+    /// Representa um DTO utilizado para atualizar parcialmente os dados de um vinho.
+    /// Todos os campos são opcionais.
+    /// </summary>
+    internal record UpdateWineDTO(string? Maker, string? Name, string? Country, string? Grape, string? Price, string? Year)
     {
     }
 }

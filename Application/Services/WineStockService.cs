@@ -24,16 +24,17 @@ namespace Fiap.Agnello.CLI.Application.Services
             RegisterStockIn(wine, add);
         }
 
-        public void RegisterStockIn(Wine wine, int add)
+        public string? RegisterStockIn(Wine wine, int add)
         {
             if (add <= 0)
             {
-                ConsoleUtil.SystemMessage("A quantidade deve ser maior que 0!");
-                return;
+                return "A quantidade deve ser maior que 0!";
             }
 
             wine.Stock += add;
             _repo.Save(wine);
+
+            return null;
         }
 
         /// <summary>
@@ -47,22 +48,22 @@ namespace Fiap.Agnello.CLI.Application.Services
             RegisterStockOut(wine, minus);
         }
 
-        public void RegisterStockOut(Wine wine, int minus)
+        public string? RegisterStockOut(Wine wine, int minus)
         {
             if (minus <= 0)
             {
-                ConsoleUtil.SystemMessage("A quantidade deve ser maior que 0!");
-                return;
+                return "A quantidade deve ser maior que 0!";
             }
 
             if (minus > wine.Stock)
             {
-                ConsoleUtil.SystemMessage("A retirada não pode ser maior que o estoque atual!");
-                return;
+                return "A retirada não pode ser maior que o estoque atual!";
             }
 
             wine.Stock -= minus;
             _repo.Save(wine);
+
+            return null;
         }
     }
 }

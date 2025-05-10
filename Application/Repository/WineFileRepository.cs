@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Fiap.Agnello.CLI.Application.Domain;
+﻿using Fiap.Agnello.CLI.Application.Domain;
 using Fiap.Agnello.CLI.db.Adapters;
 
 namespace Fiap.Agnello.CLI.Application.Repository
@@ -10,9 +9,9 @@ namespace Fiap.Agnello.CLI.Application.Repository
     /// </summary>
     internal class WineFileRepository : IWineRepository
     {
-        private static readonly string DB_FILE_NAME = "wine.db.json";
+        private static readonly string DB_TABLE_NAME = "wine";
         private static WineFileRepository? instance;
-        private readonly FileDbAdapter<Wine, int> fileDbAdapter = new(DB_FILE_NAME);
+        private readonly FileDbAdapter<Wine, int> fileDbAdapter = new(DB_TABLE_NAME);
         private readonly Dictionary<int, Wine> _items = [];
         private int _count = 1;
 

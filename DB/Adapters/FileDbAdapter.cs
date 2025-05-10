@@ -19,9 +19,9 @@ namespace Fiap.Agnello.CLI.db.Adapters
         /// Inicializa um novo adaptador de banco de dados de arquivos.
         /// Cria o diretório base se ele não existir.
         /// </summary>
-        /// <param name="fileName">Nome do arquivo (sem caminho completo).</param>
+        /// <param name="tableName">Nome da tabela. O arquivo será criado no formato {tableName}.db.json</param>
 
-        public FileDbAdapter(string fileName)
+        public FileDbAdapter(string tableName)
         {
             string dir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "DB");
 
@@ -30,7 +30,12 @@ namespace Fiap.Agnello.CLI.db.Adapters
                 Directory.CreateDirectory(dir);
             }
 
-            _path = Path.Combine(dir, fileName);
+            if (tableName.Contains('.'))
+            {
+                throw new ArgumentException("O adapter deve receber apenas o nome da tabela. Ex: user");
+            }
+
+            _path = Path.Combine(dir, tableName + ".db.json");
         }
 
         /// <summary>
