@@ -1,88 +1,121 @@
 ﻿using System.Globalization;
 using Fiap.Agnello.CLI.Application.Domain;
 using Fiap.Agnello.CLI.Application.Domain.DTO;
-using Fiap.Agnello.CLI.Application.Repository;
-using Fiap.Agnello.CLI.Util;
+using Fiap.Agnello.CLI.Application.Repository.Contracts;
+using Fiap.Agnello.CLI.Application.Services.Helpers;
 
 namespace Fiap.Agnello.CLI.Application.Services
 {
     /// <summary>
     /// Serviço responsável por interagir com o repositório de vinhos e lidar com a lógica de entrada do usuário.
     /// </summary>
-    internal class WineService(IWineRepository wineRepository)
+    internal class WineService(ICrudRepository<Wine, int> wineRepository)
     {
-        private readonly IWineRepository _repo = wineRepository;
+        private readonly ICrudRepository<Wine, int> _repo = wineRepository;
 
         /// <summary>
         /// Cria um novo vinho a partir dos dados fornecidos pelo usuário via terminal.
         /// </summary>
-        public Wine Create(WineDTO wineDTO)
+        public Result<Wine> Create(CreateWineDTO wineDTO)
         {
-            return _repo.Save(Wine.FromDTO(wineDTO));
+            try
+            {
+                return Result<Wine>.Ok(_repo.Create(Wine.FromDTO(wineDTO)));
+            } catch (Exception ex)
+            {
+                return Result<Wine>.Fail(new($"Erro cadastrando vinho: [{ex.Message}]"));
+            }
         }
 
         /// <summary>
         /// Solicita um ID ao usuário e busca o vinho correspondente.
         /// </summary>
         /// <returns>O vinho encontrado ou null se não existir.</returns>
-        public Wine? FindById(int id)
+        public Result<Wine> FindById(int id)
         {
             Wine? wine = _repo.GetById(id);
-            return wine;
-        }
-
-        public void Update(int id, UpdateWineDTO wineDTO)
-        {
-            Wine? wine = FindById(id);
             if (wine == null)
             {
-                return;
+                return Result<Wine>.Fail(new($"Nenhum vinho encontrado para o ID [{id}]"));
+            }
+            return Result<Wine>.Ok(wine);
+        }
+
+        public Result Update(int id, UpdateWineDTO wineDTO)
+        {
+            Result<Wine> result = FindById(id);
+            if (!result.Success)
+            {
+                return Result.Fail(result.Error!);
             }
 
-            Update(wine, wineDTO);
+            Update(result.Value!, wineDTO);
+
+            return Result.Ok();
         }
 
         /// <summary>
         /// Atualiza os dados de um vinho existente com base em inputs do usuário.
         /// </summary>
-        public void Update(Wine wine, UpdateWineDTO wineDTO)
+        public Result Update(Wine wine, UpdateWineDTO wineDTO)
         {
-            if (!string.IsNullOrWhiteSpace(wineDTO.Name))
-                wine.Name = wineDTO.Name;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(wineDTO.Name))
+                    wine.Name = wineDTO.Name;
 
-            if (float.TryParse(wineDTO.Price?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out float price))
-                wine.Price = price;
-            
-            if (!string.IsNullOrWhiteSpace(wineDTO.Maker))
-                wine.Maker = wineDTO.Maker;
+                if (decimal.TryParse(wineDTO.Price?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out decimal price))
+                    wine.Price = price;
 
-            if (!string.IsNullOrWhiteSpace(wineDTO.Grape))
-                wine.Grape = wineDTO.Grape;
+                if (int.TryParse(wineDTO.MakerId, out int makerId))
+                {
+                    wine.MakerId = makerId;
+                    wine.Maker = null!;
+                }
 
-            if (int.TryParse(wineDTO.Year, out int year))
-                wine.Year = year;
+                if (!string.IsNullOrWhiteSpace(wineDTO.Grape))
+                    wine.Grape = wineDTO.Grape;
 
-            if (!string.IsNullOrWhiteSpace(wineDTO.Country))
-                wine.Country = wineDTO.Country;
+                if (int.TryParse(wineDTO.Year, out int year))
+                    wine.Year = year;
 
-            _repo.Save(wine);
+                _repo.Update(wine);
+            } catch (Exception ex)
+            {
+                return Result.Fail(new($"Erro atualizando vinho: [{ex.Message}]"));
+            }
+
+            return Result.Ok();
         }
 
         /// <summary>
         /// Deleta um vinho a partir do ID fornecido pelo usuário.
         /// </summary>
-        public bool Delete(int id)
+        public Result Delete(int id)
         {
-           return _repo.Delete(id);
+           var success = _repo.Delete(id);
+
+            if (success)
+            {
+                return Result.Ok();
+            }
+
+            return Result.Fail(new BussinessError("Erro deletando vinho"));
         }
 
         /// <summary>
         /// Exibe todos os vinhos armazenados no repositório.
         /// </summary>
-        public List<Wine> GetAll()
+        public Result<List<Wine>> GetAll()
         {
-            List<Wine> wines = _repo.GetAll();
-            return wines;
+            try
+            {
+                List<Wine> wines = _repo.GetAll();
+                return Result<List<Wine>>.Ok(wines);
+            } catch (Exception ex)
+            {
+                return Result<List<Wine>>.Fail(new($"Erro buscando vinhos [{ex.Message}]"));
+            }
         }
     }
 }

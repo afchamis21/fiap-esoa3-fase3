@@ -1,6 +1,6 @@
 ﻿using Fiap.Agnello.CLI.Application.Domain;
-using Fiap.Agnello.CLI.Application.Repository;
-using Fiap.Agnello.CLI.Util;
+using Fiap.Agnello.CLI.Application.Repository.Contracts;
+using Fiap.Agnello.CLI.Application.Services.Helpers;
 
 namespace Fiap.Agnello.CLI.Application.Services
 {
@@ -8,62 +8,62 @@ namespace Fiap.Agnello.CLI.Application.Services
     /// Serviço responsável por gerenciar o estoque de vinhos.
     /// Permite registrar entradas, saídas e visualizar os estoques atuais.
     /// </summary>
-    internal class WineStockService(IWineRepository wineRepository)
+    internal class WineStockService(ICrudRepository<Wine, int> wineRepository)
     {
         private readonly WineService _wineService = new(wineRepository);
-        private readonly IWineRepository _repo = wineRepository;
+        private readonly ICrudRepository<Wine, int> _repo = wineRepository;
 
         /// <summary>
         /// Registra a entrada de estoque (adiciona unidades a um vinho).
         /// </summary>
-        public void RegisterStockIn(int id, int add)
+        public Result RegisterStockIn(int id, int add)
         {
-            Wine? wine = _wineService.FindById(id);
-            if (wine == null) return;
+            var result = _wineService.FindById(id);
+            if (!result.Success) return Result.Fail(result.Error!);
 
-            RegisterStockIn(wine, add);
+            return RegisterStockIn(result.Value!, add);
         }
 
-        public string? RegisterStockIn(Wine wine, int add)
+        public Result RegisterStockIn(Wine wine, int add)
         {
             if (add <= 0)
             {
-                return "A quantidade deve ser maior que 0!";
+                return Result.Fail(new("A quantidade deve ser maior que 0!"));
             }
 
             wine.Stock += add;
-            _repo.Save(wine);
+            _repo.Update(wine);
 
-            return null;
+            return Result.Ok();
         }
 
         /// <summary>
         /// Registra a saída de estoque (remove unidades de um vinho).
         /// </summary>
-        public void RegisterStockOut(int id, int minus)
+        public Result RegisterStockOut(int id, int minus)
         {
-            Wine? wine = _wineService.FindById(id);
-            if (wine == null) return;
+            var result = _wineService.FindById(id);
+            if (!result.Success) return Result.Fail(result.Error!);
 
-            RegisterStockOut(wine, minus);
+            return RegisterStockOut(result.Value!, minus);
         }
 
-        public string? RegisterStockOut(Wine wine, int minus)
+        public Result RegisterStockOut(Wine wine, int minus)
         {
             if (minus <= 0)
             {
-                return "A quantidade deve ser maior que 0!";
+                return Result.Fail(new("A quantidade deve ser maior que 0!"));
             }
 
             if (minus > wine.Stock)
             {
-                return "A retirada não pode ser maior que o estoque atual!";
+                return Result.Fail(new("A retirada não pode ser maior que o estoque atual!"));
             }
 
             wine.Stock -= minus;
-            _repo.Save(wine);
+            _repo.Update(wine);
 
-            return null;
+            return Result.Ok();
         }
     }
 }

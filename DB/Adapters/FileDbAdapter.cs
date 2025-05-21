@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
+using Fiap.Agnello.CLI.Application.Contracts;
 
 namespace Fiap.Agnello.CLI.db.Adapters
 {

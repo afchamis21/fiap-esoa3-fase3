@@ -1,4 +1,9 @@
 ﻿using Fiap.Agnello.CLI.Application;
+using Fiap.Agnello.CLI.Application.Repository;
 
-Application application = new Application();
+#region repos
+Repositories.RegisterRepository(() => new WineDbRepository());
+Repositories.RegisterRepository(() => new BrandDbReposiory());
+#endregion
+
 Application.Execute();

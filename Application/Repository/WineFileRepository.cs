@@ -1,4 +1,5 @@
 ﻿using Fiap.Agnello.CLI.Application.Domain;
+using Fiap.Agnello.CLI.Application.Repository.Contracts;
 using Fiap.Agnello.CLI.db.Adapters;
 
 namespace Fiap.Agnello.CLI.Application.Repository
@@ -7,7 +8,7 @@ namespace Fiap.Agnello.CLI.Application.Repository
     /// Repositório responsável por gerenciar objetos do tipo <see cref="Wine"/>.
     /// Implementa persistência em arquivo usando <see cref="FileDbAdapter{T, ID}"/>.
     /// </summary>
-    internal class WineFileRepository : IWineRepository
+    internal class WineFileRepository : ICrudRepository<Wine, int>
     {
         private static readonly string DB_TABLE_NAME = "wine";
         private static WineFileRepository? instance;
@@ -40,7 +41,7 @@ namespace Fiap.Agnello.CLI.Application.Repository
         /// <summary>
         /// Cria um novo objeto <see cref="Wine"/> e adiciona ao repositório.
         /// </summary>
-        private Wine Create(Wine entity)
+        public Wine Create(Wine entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
@@ -56,7 +57,7 @@ namespace Fiap.Agnello.CLI.Application.Repository
         /// <summary>
         /// Atualiza um <see cref="Wine"/> existente no repositório.
         /// </summary>
-        private Wine Update(Wine entity)
+        public Wine Update(Wine entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
             ArgumentNullException.ThrowIfNull(entity.Id);
@@ -105,29 +106,6 @@ namespace Fiap.Agnello.CLI.Application.Repository
             return wine;
         }
 
-
-        /// <summary>
-        /// Salva um vinho (cria ou atualiza).
-        /// </summary>
-        /// <param name="entity">O vinho a ser salvo.</param>
-        /// <returns>O vinho salvo com ID atribuído.</returns>
-
-        public Wine Save(Wine entity)
-        {
-            ArgumentNullException.ThrowIfNull(entity);
-
-            Wine wine;
-            if (entity.Id == null)
-            {
-                wine = Create(entity);
-            } else
-            {
-                wine = Update(entity);
-            }
-
-            Persist();
-            return wine;
-        }
 
         /// <summary>
         /// Persiste os dados em arquivo usando <see cref="fileDbAdapter"/>.

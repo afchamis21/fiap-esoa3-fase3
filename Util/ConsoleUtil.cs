@@ -55,13 +55,13 @@ namespace Fiap.Agnello.CLI.Util
         /// </summary>
         /// <param name="prompt">Texto a ser exibido para o usuário.</param>
         /// <returns>Um número decimal inserido pelo usuário.</returns>
-        public static float PromptFloat(string prompt)
+        public static decimal PromptDecimal(string prompt)
         {
             while (true)
             {
                 Console.Write(prompt);
                 string? value = Console.ReadLine();
-                if (float.TryParse(value?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out float result))
+                if (decimal.TryParse(value?.Replace(".", ","), NumberStyles.Float, new CultureInfo("pt-BR"), out decimal result))
                 {
                     return result;
                 }
